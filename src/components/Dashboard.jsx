@@ -53,7 +53,8 @@ const Dashboard = ({ user }) => {
     setDownloadProgress('Connecting to server...');
 
     try {
-      const backendUrl = `http://localhost:3001/api/download?url=${encodeURIComponent(url.trim())}&quality=${quality}&format=${format}`;
+      const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+      const backendUrl = `${BACKEND}/api/download?url=${encodeURIComponent(url.trim())}&quality=${quality}&format=${format}`;
 
       setDownloadProgress('Fetching video... this may take a moment');
 
@@ -145,7 +146,8 @@ const Dashboard = ({ user }) => {
       if (!val.trim()) return;
       setIsFetchingInfo(true);
       try {
-        const res = await fetch(`http://localhost:3001/api/info?url=${encodeURIComponent(val.trim())}`);
+        const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+        const res = await fetch(`${BACKEND}/api/info?url=${encodeURIComponent(val.trim())}`);
         if (res.ok) {
           const data = await res.json();
           setVideoInfo(data);

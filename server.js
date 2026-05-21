@@ -3,28 +3,35 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Temp directory — no spaces to avoid path issues
+// Temp directory
 const tempDir = path.join(os.tmpdir(), 'nexusdownloader');
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
-const ytdlpBin = path.resolve('./yt-dlp.exe');
+// yt-dlp: use local .exe on Windows, system install on Linux (Railway)
+const isWindows = process.platform === 'win32';
+const ytdlpBin = isWindows ? path.resolve('./yt-dlp.exe') : 'yt-dlp';
 
-// ffmpeg path — winget installed location
-const ffmpegPath = 'C:\\Users\\HASSAN\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe';
+// ffmpeg: local path on Windows, system on Linux
+const localFfmpeg = 'C:\\Users\\HASSAN\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe';
+const ffmpegPath = isWindows ? localFfmpeg : 'ffmpeg';
 
-// Check cookies in both locations: ./cookies/cookies.txt and ./cookies.txt
+// Cookies
 const cookiesFile = fs.existsSync(path.resolve('./cookies/cookies.txt'))
   ? path.resolve('./cookies/cookies.txt')
-  : path.resolve('./cookies.txt');
+  : fs.existsSync(path.resolve('./cookies.txt'))
+  ? path.resolve('./cookies.txt')
+  : null;
 
 console.log(`✅ Temp dir: ${tempDir}`);
-console.log(`✅ yt-dlp binary: ${ytdlpBin}`);
+console.log(`✅ yt-dlp: ${ytdlpBin}`);
+console.log(`✅ ffmpeg: ${ffmpegPath}`);
+console.log(`🍪 Cookies: ${cookiesFile ? 'Found ✅' : 'Not found'}`);
 
 // ─── Helper: build yt-dlp format string ───────────────────────────────────────
 function buildFormatArg(quality, format) {
@@ -82,13 +89,9 @@ async function getVideoInfo(url) {
   ];
 
   // Try cookies file first, then fallback to browser cookies
-  if (fs.existsSync(cookiesFile)) {
+  if (cookiesFile && fs.existsSync(cookiesFile)) {
     args.push('--cookies', cookiesFile);
     console.log('[INFO] Using cookies.txt');
-  } else {
-    // Try to use Chrome browser cookies directly
-    args.push('--cookies-from-browser', 'chrome');
-    console.log('[INFO] Using Chrome browser cookies');
   }
 
   const { stdout } = await runYtDlp(args);
@@ -190,12 +193,9 @@ app.get('/api/download', async (req, res) => {
     }
 
     // Cookies: file first, then Chrome browser cookies as fallback
-    if (fs.existsSync(cookiesFile)) {
+    if (cookiesFile && fs.existsSync(cookiesFile)) {
       dlArgs.push('--cookies', cookiesFile);
       console.log('[INFO] Download using cookies.txt');
-    } else {
-      dlArgs.push('--cookies-from-browser', 'chrome');
-      console.log('[INFO] Download using Chrome browser cookies');
     }
 
     // ── Step 3: Run download ────────────────────────────────────────────────
@@ -296,7 +296,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     ytdlp: fs.existsSync(ytdlpBin),
-    cookies: fs.existsSync(cookiesFile),
+    cookies: cookiesFile ? fs.existsSync(cookiesFile) : false,
     tempDir,
   });
 });

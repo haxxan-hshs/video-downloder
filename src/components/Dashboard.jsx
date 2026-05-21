@@ -103,12 +103,17 @@ const Dashboard = ({ user }) => {
         size: 'Check Storage',
       };
 
+      console.log('[History] Saving download:', newDownload);
+
       const { data, error } = await supabase
         .from('downloads')
         .insert([newDownload])
         .select();
 
-      if (!error && data && data.length > 0) {
+      if (error) {
+        console.error('[History] Supabase insert error:', error);
+      } else if (data && data.length > 0) {
+        console.log('[History] Saved successfully:', data[0]);
         setDownloads(prev => [data[0], ...prev]);
       }
 

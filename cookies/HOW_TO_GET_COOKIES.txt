@@ -1,0 +1,44 @@
+=====================================================
+  COOKIES.TXT - Private Video Download Guide
+=====================================================
+
+Is folder mein apni cookies.txt file rakhein.
+File ka naam hona chahiye: cookies.txt
+
+-----------------------------------------------------
+STEP 1: Chrome Extension Install Karein
+-----------------------------------------------------
+Chrome mein yeh extension install karein:
+"Get cookies.txt LOCALLY"
+Link: https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc
+
+-----------------------------------------------------
+STEP 2: YouTube/Instagram mein Login Karein
+-----------------------------------------------------
+Jis platform ki private video download karni hai
+(YouTube, Instagram, Facebook, etc.)
+us mein apne account se login karein.
+
+-----------------------------------------------------
+STEP 3: Cookies Export Karein
+-----------------------------------------------------
+1. Us platform ka koi bhi page open karein
+2. Extension icon pe click karein (top right)
+3. "Export" button dabayein
+4. File save karein as: cookies.txt
+
+-----------------------------------------------------
+STEP 4: File Yahan Rakhein
+-----------------------------------------------------
+Downloaded cookies.txt file ko is folder mein rakhein:
+
+  d:\video downloder\cookies\cookies.txt
+
+-----------------------------------------------------
+NOTE:
+-----------------------------------------------------
+- Cookies expire hoti hain — agar download fail ho
+  toh dobara export karein
+- Har platform ke liye alag cookies chahiye
+- YouTube ke liye YouTube pe login karke export karein
+=====================================================

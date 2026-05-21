@@ -73,6 +73,8 @@ function App() {
             <Route path="/" element={!isLoggedIn ? <Login /> : <Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={isLoggedIn ? <Dashboard user={user} /> : <Navigate to="/" />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
       </main>

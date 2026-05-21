@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { spawn, execFileSync } from 'child_process';
+import { spawn } from 'child_process';
 
 const app = express();
 app.use(cors());
@@ -14,6 +14,10 @@ const tempDir = path.join(os.tmpdir(), 'nexusdownloader');
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
 
 const ytdlpBin = path.resolve('./yt-dlp.exe');
+
+// ffmpeg path — winget installed location
+const ffmpegPath = 'C:\\Users\\HASSAN\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe';
+
 // Check cookies in both locations: ./cookies/cookies.txt and ./cookies.txt
 const cookiesFile = fs.existsSync(path.resolve('./cookies/cookies.txt'))
   ? path.resolve('./cookies/cookies.txt')
@@ -74,6 +78,7 @@ async function getVideoInfo(url) {
     '--no-warnings',
     '--no-check-certificate',
     '--socket-timeout', '30',
+    '--ffmpeg-location', ffmpegPath,
   ];
 
   // Try cookies file first, then fallback to browser cookies
@@ -167,6 +172,7 @@ app.get('/api/download', async (req, res) => {
       '--retries', '5',
       '--fragment-retries', '5',
       '--concurrent-fragments', '4',
+      '--ffmpeg-location', ffmpegPath,
     ];
 
     // Merge output format
